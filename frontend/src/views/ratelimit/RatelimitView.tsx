@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import { downloadEntries, listEntries, moduleMeta, runAction as applyAction } from '@/api/local-service'
+import { loadAdmissionSnapshot } from '@/api/admission-service'
 import type { EntryRow } from '@/data/types'
 
 const meta = moduleMeta('ratelimit')
@@ -45,6 +47,7 @@ export default function RatelimitView() {
   const [total, setTotal] = useState(0)
   const [errorMessage, setErrorMessage] = useState('')
   const [filters, setFilters] = useState<Record<string, string>>({})
+  const [quotaHint, setQuotaHint] = useState('')
   const filterFields = useMemo(() => columns.slice(0, 3), [])
 
   const reload = useCallback(() => {
@@ -53,6 +56,15 @@ export default function RatelimitView() {
       const payload = listEntries(meta.key, filters)
       setRows(payload.items)
       setTotal(payload.total)
+      // 令牌额度和配置版本由准入服务计算，这里只做展示，避免两处各算一套。
+      setQuotaHint(
+        loadAdmissionSnapshot()
+          .sites.map(
+            (site) =>
+              `${site.site}：${site.configNo} ${site.configVersion} 窗口额度 ${site.quota}，已用 ${site.usedTokens}`,
+          )
+          .join('；'),
+      )
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : '限速调节列表读取失败')
     }
@@ -97,6 +109,13 @@ export default function RatelimitView() {
           </article>
         ))}
       </div>
+
+      {quotaHint && (
+        <p className="panel-hint">
+          准入侧令牌额度：{quotaHint}
+          <Link className="link" to="/admission" style={{ marginLeft: 8 }}>前往限速准入</Link>
+        </p>
+      )}
 
       <p className="status-legend">
         {statuses.map((status: string) => (

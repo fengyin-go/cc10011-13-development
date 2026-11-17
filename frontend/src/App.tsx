@@ -9,6 +9,7 @@ import SpiderView from './views/spider'
 import ScheduleView from './views/schedule'
 import AntibotView from './views/antibot'
 import RatelimitView from './views/ratelimit'
+import AdmissionView from './views/admission'
 import RetryView from './views/retry'
 import ExtractorView from './views/extractor'
 import PipelineView from './views/pipeline'
@@ -21,7 +22,7 @@ import ExportView from './views/export'
 import RpaflowView from './views/rpaflow'
 import AuthView from './views/auth'
 
-const navItems = [{ label: "运营概览", path: "/" }, { label: "站点登记", path: "/site" }, { label: "模板编排", path: "/template" }, { label: "代理轮换", path: "/proxy" }, { label: "任务编排", path: "/spider" }, { label: "调度编排", path: "/schedule" }, { label: "反爬策略", path: "/antibot" }, { label: "限速调节", path: "/ratelimit" }, { label: "重试机制", path: "/retry" }, { label: "字段映射", path: "/extractor" }, { label: "采集流水线", path: "/pipeline" }, { label: "结果校验", path: "/validator" }, { label: "数据落盘", path: "/storage" }, { label: "采集监控", path: "/monitor" }, { label: "数据清洗", path: "/cleanse" }, { label: "增量水位", path: "/delta" }, { label: "数据分发", path: "/export" }, { label: "RPA流程", path: "/rpaflow" }, { label: "登录凭证", path: "/auth" }]
+const navItems = [{ label: "运营概览", path: "/" }, { label: "站点登记", path: "/site" }, { label: "模板编排", path: "/template" }, { label: "代理轮换", path: "/proxy" }, { label: "任务编排", path: "/spider" }, { label: "调度编排", path: "/schedule" }, { label: "反爬策略", path: "/antibot" }, { label: "限速调节", path: "/ratelimit" }, { label: "限速准入", path: "/admission" }, { label: "重试机制", path: "/retry" }, { label: "字段映射", path: "/extractor" }, { label: "采集流水线", path: "/pipeline" }, { label: "结果校验", path: "/validator" }, { label: "数据落盘", path: "/storage" }, { label: "采集监控", path: "/monitor" }, { label: "数据清洗", path: "/cleanse" }, { label: "增量水位", path: "/delta" }, { label: "数据分发", path: "/export" }, { label: "RPA流程", path: "/rpaflow" }, { label: "登录凭证", path: "/auth" }]
 
 export default function App() {
   const [operator] = useState('值班管理员')
@@ -52,6 +53,7 @@ export default function App() {
           <Route path="/schedule" element={<ScheduleView />} />
           <Route path="/antibot" element={<AntibotView />} />
           <Route path="/ratelimit" element={<RatelimitView />} />
+          <Route path="/admission" element={<AdmissionView />} />
           <Route path="/retry" element={<RetryView />} />
           <Route path="/extractor" element={<ExtractorView />} />
           <Route path="/pipeline" element={<PipelineView />} />

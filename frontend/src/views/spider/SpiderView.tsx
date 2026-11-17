@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import { downloadEntries, listEntries, moduleMeta, runAction as applyAction } from '@/api/local-service'
+import { syncBundle } from '@/api/admission-service'
 import type { EntryRow } from '@/data/types'
 
 const meta = moduleMeta('spider')
@@ -71,6 +73,10 @@ export default function SpiderView() {
       setErrorMessage(result.message)
       return
     }
+    if (action === '提交执行') {
+      // 进入待执行后立刻同步进限速准入批次清单，等待区能看到下一可用时间。
+      syncBundle()
+    }
     reload()
   }
 
@@ -79,7 +85,9 @@ export default function SpiderView() {
       <header className="page-head">
         <div>
           <h2>任务编排管理</h2>
-          <p className="page-desc">维护采集作业的输入、执行约束与结果记录，为任务编排提供可验证的数据工程流程。</p>
+          <p className="page-desc">
+            维护采集作业的输入、执行约束与结果记录。采集作业按限速准入批次清单启动，未分配到额度的批次保留在等待区并显示下一可用时间。
+          </p>
         </div>
         <div className="page-actions">
           <button className="btn primary" type="button" onClick={() => setErrorMessage('采集作业登记入口尚未接入审批流')}>
@@ -88,6 +96,22 @@ export default function SpiderView() {
           <button className="btn" type="button" onClick={() => downloadEntries(meta.key)}>
             导出任务编排清单
           </button>
+          <button
+            className="btn"
+            type="button"
+            onClick={() => {
+              const result = syncBundle()
+              if (!result.ok) {
+                setErrorMessage(result.message)
+                return
+              }
+              setErrorMessage('')
+              reload()
+            }}
+          >
+            同步限速准入批次
+          </button>
+          <Link className="btn" to="/admission">查看限速准入</Link>
         </div>
       </header>
 
